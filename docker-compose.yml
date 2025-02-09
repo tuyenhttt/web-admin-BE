@@ -1,0 +1,16 @@
+services:
+  mongodb:
+    image: mongo:5.0.15
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tuyen13022003
+      MONGO_INITDB_ROOT_PASSWORD: tuyen13022003
+      MONGO_INITDB_DATABASE: admin_web_nextjs
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+
+volumes:
+  mongodb_data_container:
+
+    # docker compose -p admin_web_nextjs-mongodb-4rn up -d
