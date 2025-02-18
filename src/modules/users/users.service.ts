@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { User } from '@/modules/users/schemas/user.schema';
 import { hashPasswordHelper } from '@/helpers/utils';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +20,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const { name, email, password, phone, address, image } = createUserDto;
 
-    //ccheck email
+    //check email
     const isExist = await this.isEmailExist(email);
     if (isExist) {
       throw new BadRequestException(
@@ -67,11 +68,24 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findByEmail(email: string) {
+    return await this.userModel.findOne({ email });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    return await this.userModel.updateOne(
+      { _id: updateUserDto },
+      { ...updateUserDto },
+    );
+  }
+
+  async remove(_id: string) {
+    // check id
+    if (mongoose.isValidObjectId(_id)) {
+      //delete
+      return this.userModel.deleteOne({ _id });
+    } else {
+      throw new BadRequestException('Invalid id');
+    }
   }
 }
