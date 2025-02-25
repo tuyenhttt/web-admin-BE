@@ -7,6 +7,9 @@ import { User } from '@/modules/users/schemas/user.schema';
 import { hashPasswordHelper } from '@/helpers/utils';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +27,7 @@ export class UsersService {
     const isExist = await this.isEmailExist(email);
     if (isExist) {
       throw new BadRequestException(
-        `Email is exits: ${email}. Please use other email`,
+        `Email already exits: ${email}. Please use other email`,
       );
     }
     //hash password
@@ -87,5 +90,34 @@ export class UsersService {
     } else {
       throw new BadRequestException('Invalid id');
     }
+  }
+
+  async handleRegister(registerDto: CreateAuthDto) {
+    const { name, email, password } = registerDto;
+
+    //check email
+    const isExist = await this.isEmailExist(email);
+    if (isExist) {
+      throw new BadRequestException(
+        `Email already exits: ${email}. Please use other email`,
+      );
+    }
+    //hash password
+    const hashPassword = await hashPasswordHelper(password);
+    const user = await this.userModel.create({
+      name,
+      email,
+      password: hashPassword,
+      isActive: false,
+      codeId: uuidv4(),
+      codeExpired: dayjs().add(1, 'minutes'),
+    });
+
+    //trả ra phản hồi
+    return {
+      _id: user._id,
+    };
+
+    //send email
   }
 }
