@@ -39,7 +39,11 @@ export class AuthController {
       to: 'tuyenhttqe170226@fpt.edu.vn', // list of receivers
       subject: 'Testing Nest MailerModule ✔', // Subject line
       text: 'welcome', // plaintext body
-      html: '<b>Hello world web Thanh Tuyen</b>', // HTML body content
+      template: 'register.hbs',
+      context: {
+        name: 'Thanh Tuyen',
+        activationCode: 123456789,
+      },
     });
     return 'ok';
   }
