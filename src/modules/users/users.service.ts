@@ -161,4 +161,37 @@ export class UsersService {
       throw new BadRequestException('Code expired');
     }
   }
+
+  async retryActive(email: string) {
+    const user = await this.userModel.findOne({ email });
+
+    if (!user) {
+      throw new BadRequestException('Account not exist');
+    }
+
+    if (user.isActive) {
+      throw new BadRequestException('Account already active');
+    }
+
+    //send email
+    const codeId = uuidv4();
+
+    //update user
+    await user.updateOne({
+      codeId: codeId,
+      codeExpired: dayjs().add(2, 'minutes'),
+    });
+
+    //send email
+    this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Active your account at @thanhtuyen',
+      template: 'register.hbs',
+      context: {
+        name: user.name ?? user.email,
+        activationCode: codeId,
+      },
+    });
+    return { _id: user._id };
+  }
 }
