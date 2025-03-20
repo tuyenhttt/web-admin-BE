@@ -23,12 +23,12 @@ export class ChangePasswordAuthDto {
   @IsNotEmpty({ message: 'Code is not empty' })
   code: string;
 
-  @IsNotEmpty({ message: 'password is not empty' })
+  @IsNotEmpty({ message: 'Password is not empty' })
   password: string;
 
-  @IsNotEmpty({ message: 'confirmPassword is not empty' })
+  @IsNotEmpty({ message: 'ConfirmPassword is not empty' })
   confirmPassword: string;
 
-  @IsNotEmpty({ message: 'email is not empty' })
+  @IsNotEmpty({ message: 'Email is not empty' })
   email: string;
 }
