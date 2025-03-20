@@ -73,7 +73,15 @@ export class UsersService {
       .skip(skip)
       .select('-password')
       .sort(sort as any);
-    return { results, totalPages };
+    return {
+      meta: {
+        current: current,
+        pageSize: pageSize,
+        pages: totalPages,
+        total: totalItems,
+      },
+      results,
+    };
   }
 
   findOne(id: number) {
